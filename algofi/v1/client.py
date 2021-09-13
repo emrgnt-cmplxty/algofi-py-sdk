@@ -22,7 +22,7 @@ class Client:
         params.fee = 1000
         self.params = params
 
-    def opt_in_all(self, sender_key, params):
+    def opt_in_all(self, sender_key):
         n_apps = 0
         n_assets = 0
         for symbol in ordered_symbols:
