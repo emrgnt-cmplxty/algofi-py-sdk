@@ -5,7 +5,7 @@ from algosdk.error import AlgodHTTPError
 from algosdk.encoding import encode_address
 from algofi.utils import opt_in_user_to_app, opt_in_user_to_asset, wait_for_confirmation
 from algofi.assets import Asset, AssetAmount
-from algofi.config import ordered_symbols, assets, manager_id, escrow_hash, storage_ids
+from algofi.config import ordered_symbols, assets, manager_id, storage_ids
 from .optin import prepare_app_optin_transactions
 from .constants import TESTNET_VALIDATOR_APP_ID, MAINNET_VALIDATOR_APP_ID
 
