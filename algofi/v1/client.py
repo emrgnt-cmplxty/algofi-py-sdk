@@ -28,26 +28,26 @@ class Client:
         for symbol in ordered_symbols:
             #try:
                 stxn_assets = opt_in_user_to_asset(self.user_address, sender_key, self.params, assets[symbol])
-                txn = self.algod.send_transactions(self.client, [stxn_assets])
+                txn = self.algod.send_transactions(self.algod, [stxn_assets])
                 n_assets = n_assets + 1
             #except:
             #    pass
             #try:               
                 stxn_bank_assets = opt_in_user_to_asset(self.user_address, sender_key, self.params, assets['b'+symbol])
-                txn = self.algod.send_transactions(self.client, [stxn_bank_assets])
+                txn = self.algod.send_transactions(self.algod, [stxn_bank_assets])
                 n_assets = n_assets + 1
             #except:
             #    pass
             #try:               
                 stxn = opt_in_user_to_app(self.user_address, sender_key, self.params, storage_ids[symbol])
-                txn = self.algod.send_transactions(self.client, [stxn])
+                txn = self.algod.send_transactions(self.algod, [stxn])
                 n_apps = n_apps + 1
             #except:
             #    pass
             
         try:               
             stxn = opt_in_user_to_app(self.user_address, sender_key, self.params, manager_id)
-            txn = send_and_wait(self.client, [stxn])
+            txn = send_and_wait(self.algod, [stxn])
             n_apps = n_apps + 1
         except:
             pass
