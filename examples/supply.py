@@ -14,8 +14,9 @@ sender = {
 }
 
 client = TestnetClient(user_address=sender['address'])
-client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 client.init_params()
+
+client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 
 asset_name = "USDC"
 transaction_group = prepare_supply_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100, asset_name)
