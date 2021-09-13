@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license="MIT",
     project_urls={
-        "Source": "https://github.com/algofi/algofi-py-sdk",
+        "Source": "https://github.com/owen-colegrove/algofi-py-sdk",
     },
     install_requires=["py-algorand-sdk >= 1.6.0"],
     packages=setuptools.find_packages(),
