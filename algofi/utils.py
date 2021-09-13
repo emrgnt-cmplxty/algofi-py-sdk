@@ -28,7 +28,7 @@ def opt_in_user_to_asset(sender_addr, sender_key, params, asset_id):
 def opt_in_user_to_app(sender_addr, sender_key, params, app_id):
     # declare sender
     # create unsigned transaction
-    txn = transaction.ApplicationOptInTxn(sender_addr, params, app_id)
+    txn = ApplicationOptInTxn(sender_addr, params, app_id)
     # sign transaction
     return txn.sign(sender_key) 
 
