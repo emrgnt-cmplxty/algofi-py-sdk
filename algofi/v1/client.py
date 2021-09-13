@@ -15,6 +15,12 @@ class Client:
         self.assets_cache = {}
         self.user_address = user_address
     
+    def init_params(self):
+        params = self.algod.suggested_params()
+        params.flat_fee = True
+        params.fee = 1000
+        self.params = params
+
     def fetch_pool(self, asset1, asset2, fetch=True):
         from .pools import Pool
         return Pool(self, asset1, asset2, fetch=fetch)
