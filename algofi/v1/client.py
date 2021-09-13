@@ -79,13 +79,13 @@ class Client:
                 return True
         return False
 
-class TestnetClient(TinymanClient):
+class TestnetClient(Client):
     def __init__(self, algod_client=None, user_address=None):
         if algod_client is None:
             algod_client = AlgodClient('', 'https://api.testnet.algoexplorer.io', headers={'User-Agent': 'algosdk'})
         super().__init__(algod_client, validator_app_id=TESTNET_VALIDATOR_APP_ID, user_address=user_address)
 
-class MainnetClient(TinymanClient):
+class MainnetClient(Client):
     def __init__(self, algod_client=None, user_address=None):
         raise Exception('Not on mainnet yet!')
         if algod_client is None:

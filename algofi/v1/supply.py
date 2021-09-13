@@ -2,8 +2,8 @@ import base64
 from os import name
 import algosdk
 from algosdk.future.transaction import ApplicationNoOpTxn, PaymentTxn, AssetTransferTxn
-
-from algofi.utils import package_all_tx, get_init_txns#, TransactionGroup
+from .prepend import get_init_txns
+from algofi.utils import package_all_tx
 from algofi.config import manager_id, escrow_hash, storage_ids
 
 def prepare_supply_transactions(sender_addr, sender_key, params, amt, asset_name):
