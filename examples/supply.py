@@ -13,6 +13,7 @@ sender = {
     'mnemonic': 'hamster size staff top reject clap ivory matrix vintage trip south current transfer upper lemon all toe fade again sweet south rely horse about giraffe', # Use algosdk.mnemonic.to_private_key(mnemonic) if necessary
 }
 
+print('private_key=%s' % (mnemonic.to_private_key(sender['mnemonic'])))
 client = TestnetClient(user_address=sender['address'])
 client.init_params()
 client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))

@@ -44,15 +44,12 @@ class Client:
                 n_apps = n_apps + 1
             except:
                 pass
-            
         try:               
             stxn = opt_in_user_to_app(self.user_address, sender_key, self.params, manager_id)
             txn = send_and_wait(self.algod, [stxn])
             n_apps = n_apps + 1
         except:
             pass
-        print("%s APPLICATIONS OPTED IN SUCCESSFULLY" % (n_apps))
-        print("%s ASSETS OPTED IN SUCCESSFULLY" % (n_assets))
 
     def submit(self, transaction_group, wait=False):
         try:
