@@ -22,31 +22,31 @@ class Client:
         params.fee = 1000
         self.params = params
 
-    def opt_in_all(self, sender_key):
+    def opt_in_all(self, sender_key, params):
         n_apps = 0
         n_assets = 0
         for symbol in ordered_symbols:
             #try:
-                stxn_assets = opt_in_user_to_asset(self.user_address, sender_key, assets[symbol])
+                stxn_assets = opt_in_user_to_asset(self.user_address, sender_key, self.params, assets[symbol])
                 txn = self.algod.send_transactions(self.client, [stxn_assets])
                 n_assets = n_assets + 1
             #except:
             #    pass
             #try:               
-                stxn_bank_assets = opt_in_user_to_asset(self.user_address, sender_key, assets['b'+symbol])
+                stxn_bank_assets = opt_in_user_to_asset(self.user_address, sender_key, self.params, assets['b'+symbol])
                 txn = self.algod.send_transactions(self.client, [stxn_bank_assets])
                 n_assets = n_assets + 1
             #except:
             #    pass
             #try:               
-                stxn = opt_in_user_to_app(self.user_address, sender_key, storage_ids[symbol])
+                stxn = opt_in_user_to_app(self.user_address, sender_key, self.params, storage_ids[symbol])
                 txn = self.algod.send_transactions(self.client, [stxn])
                 n_apps = n_apps + 1
             #except:
             #    pass
             
         try:               
-            stxn = opt_in_user_to_app(self.user_address, sender_key, manager_id)
+            stxn = opt_in_user_to_app(self.user_address, sender_key, self.params, manager_id)
             txn = send_and_wait(self.client, [stxn])
             n_apps = n_apps + 1
         except:
