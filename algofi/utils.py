@@ -17,6 +17,22 @@ def package_all_tx(txns, keys, sign_last_wlogic=False):
     return stxn_group
 
 
+#   Utility function used to create opt-in asset transaction
+def opt_in_user_to_asset(sender_addr, sender_key, params, asset_id):
+    # declare sender
+    txn = AssetTransferTxn(sender=sender_addr, sp=params, receiver=add, amt=0, index=asset_id)
+    return txn.sign(sender_key)
+
+
+#   Utility function used to create opt-in appl transaction
+def opt_in_user_to_app(sender_addr, sender_key, params, app_id):
+    # declare sender
+    # create unsigned transaction
+    txn = transaction.ApplicationOptInTxn(sender_addr, params, app_id)
+    # sign transaction
+    return txn.sign(sender_key) 
+
+
 def get_program(definition, variables=None):
     """
     Return a byte array to be used in LogicSig.

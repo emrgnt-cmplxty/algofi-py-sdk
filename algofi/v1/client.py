@@ -3,7 +3,7 @@ from base64 import b64decode
 from algosdk.v2client.algod import AlgodClient
 from algosdk.error import AlgodHTTPError
 from algosdk.encoding import encode_address
-from algofi.utils import wait_for_confirmation
+from algofi.utils import opt_in_user_to_app, opt_in_user_to_asset, wait_for_confirmation
 from algofi.assets import Asset, AssetAmount
 from algofi.config import assets, manager_id, escrow_hash, storage_ids
 from .optin import prepare_app_optin_transactions
@@ -22,31 +22,31 @@ class Client:
         params.fee = 1000
         self.params = params
 
-    def opt_in_all(self, passphrase):
+    def opt_in_all(self, sender_key):
         n_apps = 0
         n_assets = 0
         for symbol in ordered_symbols:
             try:
-                stxn_assets = opt_in_user_to_asset(self.client, passphrase, assets[symbol])
+                stxn_assets = opt_in_user_to_asset(self.user_address, sender_key, assets[symbol])
                 txn = self.algod.send_transactions(self.client, [stxn_assets])
                 n_assets = n_assets + 1
             except:
                 pass
             try:               
-                stxn_bank_assets = opt_in_user_to_asset(self.client, passphrase, assets['b'+symbol])
+                stxn_bank_assets = opt_in_user_to_asset(self.user_address, sender_key, assets['b'+symbol])
                 txn = self.algod.send_transactions(self.client, [stxn_bank_assets])
                 n_assets = n_assets + 1
             except:
                 pass
             try:               
-                stxn = opt_in_user_to_app(self.client, passphrase, storage_ids[symbol])
+                stxn = opt_in_user_to_app(self.user_address, sender_key, storage_ids[symbol])
                 txn = self.algod.send_transactions(self.client, [stxn])
                 n_apps = n_apps + 1
             except:
                 pass
             
         try:               
-            stxn = opt_in_user_to_app(self.client, passphrase, manager_id)
+            stxn = opt_in_user_to_app(self.user_address, sender_key, manager_id)
             txn = send_and_wait(self.client, [stxn])
             n_apps = n_apps + 1
         except:
