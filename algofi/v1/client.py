@@ -8,7 +8,7 @@ from algofi.assets import Asset, AssetAmount
 from .optin import prepare_app_optin_transactions
 from .constants import TESTNET_VALIDATOR_APP_ID, MAINNET_VALIDATOR_APP_ID
 
-class Client:
+class TinymanClient:
     def __init__(self, algod_client: AlgodClient, validator_app_id: int, user_address=None):
         self.algod = algod_client
         self.validator_app_id = validator_app_id
@@ -81,14 +81,14 @@ class Client:
 
 
 
-class TestnetClient(TinymanClient):
+class TinymanTestnetClient(TinymanClient):
     def __init__(self, algod_client=None, user_address=None):
         if algod_client is None:
             algod_client = AlgodClient('', 'https://api.testnet.algoexplorer.io', headers={'User-Agent': 'algosdk'})
         super().__init__(algod_client, validator_app_id=TESTNET_VALIDATOR_APP_ID, user_address=user_address)
 
 
-class MainnetClient(TinymanClient):
+class TinymanMainnetClient(TinymanClient):
     def __init__(self, algod_client=None, user_address=None):
         raise Exception('Not on mainnet yet!')
         if algod_client is None:
