@@ -12,7 +12,7 @@ sender = {
     'private_key': 'hamster size staff top reject clap ivory matrix vintage trip south current transfer upper lemon all toe fade again sweet south rely horse about giraffe', # Use algosdk.mnemonic.to_private_key(mnemonic) if necessary
 }
 
-client = TestnetClient(user_address=account['address'])
+client = TestnetClient(user_address=sender['address'])
 client.init_params()
 
 asset_name = "USDC"
