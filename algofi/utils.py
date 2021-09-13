@@ -1,9 +1,9 @@
 from base64 import b64decode, b64encode
-from algosdk.future.transaction import LogicSigTransaction, assign_group_id
+from algosdk.future.transaction import LogicSigTransaction, assign_group_id, calculate_group_id
 from algosdk.error import AlgodHTTPError
 
 def package_all_tx(txns, keys, sign_last_wlogic=False):
-    gid = transaction.calculate_group_id(txns)
+    gid = calculate_group_id(txns)
     stxn_group = []
     for txn,key in zip(txns,keys):
         txn.group = gid
