@@ -20,7 +20,7 @@ def package_all_tx(txns, keys, sign_last_wlogic=False):
 #   Utility function used to create opt-in asset transaction
 def opt_in_user_to_asset(sender_addr, sender_key, params, asset_id):
     # declare sender
-    txn = AssetTransferTxn(sender=sender_addr, sp=params, receiver=add, amt=0, index=asset_id)
+    txn = AssetTransferTxn(sender=sender_addr, sp=params, receiver=sender_addr, amt=0, index=asset_id)
     return txn.sign(sender_key)
 
 
