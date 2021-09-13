@@ -35,7 +35,7 @@ class Client:
 
     def submit(self, transaction_group, wait=False):
         try:
-            txid = self.algod.send_transactions(transaction_group.signed_transactions)
+            txid = self.algod.send_transactions(transaction_group)
         except AlgodHTTPError as e:
             raise Exception(json.loads(e.args[0])['message']) from None
         if wait:
@@ -51,31 +51,6 @@ class Client:
             suggested_params=suggested_params,
         )
         return txn_group
-
-    def fetch_excess_amounts(self, user_address=None):
-        user_address = user_address or self.user_address
-        account_info = self.algod.account_info(user_address)
-        try:
-            validator_app = [a for a in account_info['apps-local-state'] if a['id'] == self.validator_app_id][0]
-        except IndexError:
-            return {}
-        try:
-            validator_app_state = {x['key']: x['value'] for x in validator_app['key-value']}
-        except KeyError:
-            return {}
-
-        pools = {}
-        for key in validator_app_state:
-            b = b64decode(key.encode())
-            if b[-9:-8] == b'e':
-                value = validator_app_state[key]['uint']
-                pool_address = encode_address(b[:-9])
-                pools[pool_address] = pools.get(pool_address, {})
-                asset_id = int.from_bytes(b[-8:], 'big')
-                asset = self.fetch_asset(asset_id)
-                pools[pool_address][asset] = AssetAmount(asset, value)
-
-        return pools
     
     def is_opted_in(self, user_address=None):
         user_address = user_address or self.user_address
