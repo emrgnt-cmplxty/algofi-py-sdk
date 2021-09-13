@@ -1,4 +1,4 @@
-from alogfi.config import manager_id, storage_ids, oracle_ids, ordered_symbols
+from algofi.config import manager_id, storage_ids, oracle_ids, ordered_symbols
 
 def get_init_txns(sender_addr, params, account=None):
     txn0 = transaction.ApplicationNoOpTxn(sender_addr, params, manager_id, 
