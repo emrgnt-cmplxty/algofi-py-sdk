@@ -14,6 +14,7 @@ sender = {
 }
 
 client = TestnetClient(user_address=sender['address'])
+client.opt_in_all()
 client.init_params()
 
 asset_name = "USDC"

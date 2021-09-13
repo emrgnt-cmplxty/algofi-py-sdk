@@ -5,6 +5,7 @@ from algosdk.error import AlgodHTTPError
 from algosdk.encoding import encode_address
 from algofi.utils import wait_for_confirmation
 from algofi.assets import Asset, AssetAmount
+from algofi.config import assets, manager_id, escrow_hash, storage_ids
 from .optin import prepare_app_optin_transactions
 from .constants import TESTNET_VALIDATOR_APP_ID, MAINNET_VALIDATOR_APP_ID
 
@@ -21,17 +22,37 @@ class Client:
         params.fee = 1000
         self.params = params
 
-    def fetch_pool(self, asset1, asset2, fetch=True):
-        from .pools import Pool
-        return Pool(self, asset1, asset2, fetch=fetch)
-
-    def fetch_asset(self, asset_id):
-        if asset_id not in self.assets_cache:
-            asset = Asset(asset_id)
-            asset.fetch(self.algod)
-            self.assets_cache[asset_id] = asset
-        return self.assets_cache[asset_id]
-
+    def opt_in_all(self, passphrase):
+        n_apps = 0
+        n_assets = 0
+        for symbol in ordered_symbols:
+            try:
+                stxn_assets = opt_in_user_to_asset(self.client, passphrase, assets[symbol])
+                txn = self.algod.send_transactions(self.client, [stxn_assets])
+                n_assets = n_assets + 1
+            except:
+                pass
+            try:               
+                stxn_bank_assets = opt_in_user_to_asset(self.client, passphrase, assets['b'+symbol])
+                txn = self.algod.send_transactions(self.client, [stxn_bank_assets])
+                n_assets = n_assets + 1
+            except:
+                pass
+            try:               
+                stxn = opt_in_user_to_app(self.client, passphrase, storage_ids[symbol])
+                txn = self.algod.send_transactions(self.client, [stxn])
+                n_apps = n_apps + 1
+            except:
+                pass
+            
+        try:               
+            stxn = opt_in_user_to_app(self.client, passphrase, manager_id)
+            txn = send_and_wait(self.client, [stxn])
+            n_apps = n_apps + 1
+        except:
+            pass
+        print("%s APPLICATIONS OPTED IN SUCCESSFULLY" % (n_apps))
+        print("%s ASSETS OPTED IN SUCCESSFULLY" % (n_assets))
 
     def submit(self, transaction_group, wait=False):
         try:
