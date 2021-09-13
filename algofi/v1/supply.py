@@ -4,7 +4,7 @@ import algosdk
 from algosdk.future.transaction import ApplicationNoOpTxn, PaymentTxn, AssetTransferTxn
 from .prepend import get_init_txns
 from algofi.utils import package_all_tx
-from algofi.config import manager_id, escrow_hash, storage_ids
+from algofi.config import assets, manager_id, escrow_hash, storage_ids
 
 def prepare_supply_transactions(sender_addr, sender_key, params, amt, asset_name):
     (txn0, txn1, txn2, txn3) = get_init_txns(sender_addr, params)
