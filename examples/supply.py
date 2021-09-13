@@ -14,7 +14,7 @@ sender = {
 }
 
 client = TestnetClient(user_address=sender['address'])
-client.opt_in_all()
+client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 client.init_params()
 
 asset_name = "USDC"
