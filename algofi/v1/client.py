@@ -49,15 +49,15 @@ class Client:
             pass
 
     def get_user_state(self):
-        init = {"manager" : read_local_state(manager_id)}
+        init = {"manager" : read_local_state(self.algod, manager_id)}
         for asset_name in ordered_symbols:
-            init = {asset_name : read_local_state(storage_ids[asset_name])}
+            init = {asset_name : read_local_state(self.algod, storage_ids[asset_name])}
         return init
 
     def get_global_states(self):
-        init = {"manager" : read_global_state(manager_id)}
+        init = {"manager" : read_global_state(self.algod, manager_id)}
         for asset_name in ordered_symbols:
-            init = {asset_name : read_global_state(storage_ids[asset_name])}
+            init = {asset_name : read_global_state(self.algod, storage_ids[asset_name])}
         return init
 
     def submit(self, transaction_group, wait=False):

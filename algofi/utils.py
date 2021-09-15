@@ -60,8 +60,8 @@ def encode_varint(number):
     return buf
 
 # read user local state
-def read_local_state(self, app_id):
-    results = self.algod.account_info(self.user_address)
+def read_local_state(algod, app_id):
+    results = algod.account_info(self.user_address)
     for local_state in results['apps-local-state']:
         if local_state['id'] == app_id:
             if 'key-value' not in local_state:
@@ -70,8 +70,8 @@ def read_local_state(self, app_id):
     return {}
 
 # read app global state
-def read_global_state(self, app_id):
-    results = self.algod.account_info(self.user_address)
+def read_global_state(algod, app_id):
+    results = algod.account_info(self.user_address)
     apps_created = results['created-apps']
     for app in apps_created:
         if app['id'] == app_id:
