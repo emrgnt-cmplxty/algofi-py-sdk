@@ -59,6 +59,29 @@ def encode_varint(number):
             break
     return buf
 
+
+def format_state(state):
+    formatted = {}
+    for item in state:
+        key = item['key']
+        value = item['value']
+        try:
+            formatted_key = base64.b64decode(key).decode('utf-8')
+        except:
+            formatted_key = key
+        if value['type'] == 1:
+            # byte string
+            if formatted_key == 'voted':
+                formatted_value = base64.b64decode(value['bytes']).decode('utf-8')
+            else:
+                formatted_value = value['bytes']
+            formatted[formatted_key] = formatted_value
+        else:
+            # integer
+            formatted[formatted_key] = value['uint']
+    return formatted
+
+
 # read user local state
 def read_local_state(algod, user_address, app_id):
     results = algod.account_info(user_address)
