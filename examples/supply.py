@@ -21,7 +21,9 @@ client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 for asset_name in ordered_symbols:
     print("Processing transaction for asset=%s" % (asset_name))
     txn_group = TransactionGroup(prepare_supply_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100, asset_name))
-    txn_group.set_transaction_keys([sender['address']]*len(txn_group.transactions))
-    result = client.submit(txn_group.sign(sign_last_wlogic=False).signed_transactions, wait=True)
+    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*len(txn_group.transactions))
+    txn_group.sign(sign_last_wlogic=False)
+    print('signed txn gorup = ', txn_group.signed_transactions)
+    result = client.submit(txn_group.signed_transactions, wait=True)
 
 #for asset_name in ordered_symbols:

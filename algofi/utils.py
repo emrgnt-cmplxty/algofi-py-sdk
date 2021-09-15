@@ -104,7 +104,6 @@ def get_state_bytes(state, key):
 
 class TransactionGroup:
     def __init__(self, transactions):
-        transactions = assign_group_id(transactions)
         self.transactions = transactions
         self.signed_transactions = [None for _ in self.transactions]
 
@@ -114,7 +113,7 @@ class TransactionGroup:
     def sign(self, sign_last_wlogic=False):
         stxn_group = []
         gid = calculate_group_id(self.transactions)
-        for txn,key in zip(self.transactions, self.keys):
+        for txn, key in zip(self.transactions, self.keys):
             txn.group = gid
             if txn != self.transactions[-1]:
                 stxn_group.append(txn.sign(key))
@@ -124,12 +123,3 @@ class TransactionGroup:
                 else:
                     stxn_group.append(txn.sign(key))
         self.signed_transactions = stxn_group
-    
-    def submit(self, algod, wait=False):
-        try:
-            txid = algod.send_transactions(self.signed_transactions)
-        except AlgodHTTPError as e:
-            raise Exception(str(e))
-        if wait:
-            return wait_for_confirmation(algod, txid)
-        return {'txid': txid}
