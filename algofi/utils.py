@@ -1,4 +1,4 @@
-from base64 import b64decode, b64encode
+from base64 import decodebytes, b64decode, b64encode
 from algosdk.future.transaction import AssetTransferTxn, ApplicationOptInTxn, LogicSigTransaction, assign_group_id, calculate_group_id
 from algosdk.error import AlgodHTTPError
 
@@ -75,7 +75,7 @@ def format_state(state):
 
 def logic_sign(txn, program):
     t = program.encode()
-    program_encoded = base64.decodebytes(t)
+    program_encoded = decodebytes(t)
     lsig = transaction.LogicSig(program_encoded)
     return transaction.LogicSigTransaction(txn, lsig)
 
