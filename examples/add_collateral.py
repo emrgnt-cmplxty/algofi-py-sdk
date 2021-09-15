@@ -30,6 +30,7 @@ for asset_name in ordered_symbols:
     txn_group.sign(sign_last_wlogic=False)
     result = client.submit(txn_group.signed_transactions, wait=True)
 
+
 print("~"*100)
 print("Global contract states after calling add_collateral")
 print("~"*100)

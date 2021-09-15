@@ -20,7 +20,7 @@ client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 init_global_state = client.get_global_states()
 
 print("~"*100)
-print("Processing burn transactions for all assets")
+print("Processing repay_borrow transactions for all assets")
 print("~"*100)
 for asset_name in ordered_symbols:
     print("Processing transaction for asset = %s" % (asset_name))
@@ -28,6 +28,7 @@ for asset_name in ordered_symbols:
     txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*len(txn_group.transactions))
     txn_group.sign(sign_last_wlogic=False)
     result = client.submit(txn_group.signed_transactions, wait=True)
+
 print("~"*100)
 print("Global contract states after calling repay_borrow")
 print("~"*100)

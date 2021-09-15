@@ -65,7 +65,51 @@ for asset_name in ordered_symbols:
     txn_group.sign(sign_last_wlogic=True)
     result = client.submit(txn_group.signed_transactions, wait=True)
 
+
+print("~"*100)
+print("Processing add_collateral transactions for all assets")
+print("~"*100)
+for asset_name in ordered_symbols:
+    print("Processing transaction for asset = %s" % (asset_name))
+    txn_group = TransactionGroup(prepare_add_collateral_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 20*decimals[asset_name], asset_name))
+    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*len(txn_group.transactions))
+    txn_group.sign(sign_last_wlogic=False)
+    result = client.submit(txn_group.signed_transactions, wait=True)
+
+
+print("~"*100)
+print("Processing remove_collateral transactions for all assets")
+print("~"*100)
+for asset_name in ordered_symbols:
+    print("Processing transaction for asset = %s" % (asset_name))
+    txn_group = TransactionGroup(prepare_remove_collateral_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 1*decimals[asset_name], asset_name))
+    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*(len(txn_group.transactions)-1)+[escrow_programs[asset_name]])
+    txn_group.sign(sign_last_wlogic=True)
+    result = client.submit(txn_group.signed_transactions, wait=True)
+
+
+print("~"*100)
+print("Processing claim_borrow transactions for all assets")
+print("~"*100)
+for asset_name in ordered_symbols:
+    print("Processing transaction for asset = %s" % (asset_name))
+    txn_group = TransactionGroup(prepare_claim_borrow_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 1*decimals[asset_name], asset_name))
+    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*(len(txn_group.transactions)-1)+[escrow_programs[asset_name]])
+    txn_group.sign(sign_last_wlogic=True)
+    result = client.submit(txn_group.signed_transactions, wait=True)
+
+
+print("~"*100)
+print("Processing repay_borrow transactions for all assets")
+print("~"*100)
+for asset_name in ordered_symbols:
+    print("Processing transaction for asset = %s" % (asset_name))
+    txn_group = TransactionGroup(prepare_repay_borrow_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 1*decimals[asset_name], asset_name))
+    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*len(txn_group.transactions))
+    txn_group.sign(sign_last_wlogic=False)
+    result = client.submit(txn_group.signed_transactions, wait=True)
     
+
 print("~"*100)
 print("Global contract states after calling all")
 print("~"*100)
@@ -80,6 +124,7 @@ for asset_name in ordered_symbols:
     print('final total_borrow_interest_rate=', final_global_state[asset_name]['total_borrow_interest_rate']/scale)
     print("~"*100)
 
+
 print("~"*100)
 print("User local states after calling all")
 print("~"*100)
@@ -87,7 +132,9 @@ final_user_state = client.get_user_state()
 for asset_name in ordered_symbols:
     print("Printing global state for asset = ", asset_name)
     print('user_bank_minted=', final_user_state[asset_name]['user_bank_minted']/decimals[asset_name])
-    print('user_bank_pending_claim=', final_user_state[asset_name]['user_bank_pending_mint']/decimals[asset_name])
+    print('user_bank_pending_claim_mint=', final_user_state[asset_name]['user_bank_pending_mint']/decimals[asset_name])
     print('user_bank_pending_claim_burn=', final_user_state[asset_name]['user_underlying_pending_burn']/decimals[asset_name])
+    print('user_active_collateral_amount=', final_user_state[asset_name]['user_active_collateral_amount']/decimals[asset_name])
+    print('user_borrowed_amount=', final_user_state[asset_name]['user_borrowed_amount']/decimals[asset_name])
     print("~"*100)
 
