@@ -2,19 +2,6 @@ from base64 import b64decode, b64encode
 from algosdk.future.transaction import AssetTransferTxn, ApplicationOptInTxn, LogicSigTransaction, assign_group_id, calculate_group_id
 from algosdk.error import AlgodHTTPError
 
-def package_all_tx(txns, keys, sign_last_wlogic=False):
-    gid = calculate_group_id(txns)
-    stxn_group = []
-    for txn,key in zip(txns,keys):
-        txn.group = gid
-        if txn!=txns[-1]:
-            stxn_group.append(txn.sign(key))
-        else:
-            if (sign_last_wlogic):
-                stxn_group.append(logic_sign(txn, key))
-            else:
-                stxn_group.append(txn.sign(key))
-    return stxn_group
 
 #   Utility function used to create opt-in asset transaction
 def opt_in_user_to_asset(sender_addr, sender_key, params, asset_id):
@@ -116,25 +103,23 @@ def get_state_bytes(state, key):
 
 
 class TransactionGroup:
-
     def __init__(self, transactions):
         transactions = assign_group_id(transactions)
         self.transactions = transactions
         self.signed_transactions = [None for _ in self.transactions]
-    
-    def sign(self, user):
-        user.sign_transaction_group(self)
-    
-    def sign_with_logicisg(self, logicsig):
-        address = logicsig.address()
-        for i, txn in enumerate(self.transactions):
-            if txn.sender == address:
-                self.signed_transactions[i] = LogicSigTransaction(txn, logicsig)
 
-    def sign_with_private_key(self, address, private_key):
-        for i, txn in enumerate(self.transactions):
-            if txn.sender == address:
-                self.signed_transactions[i] = txn.sign(private_key)
+    def sign(self, keys, sign_last_wlogic=False):
+        stxn_group = []
+        for txn,key in zip(self.transactions, keys):
+            txn.group = gid
+            if txn != txns[-1]:
+                stxn_group.append(txn.sign(key))
+            else:
+                if (sign_last_wlogic):
+                    stxn_group.append(logic_sign(txn, key))
+                else:
+                    stxn_group.append(txn.sign(key))
+        self.signed_transactions = stxn_group
     
     def submit(self, algod, wait=False):
         try:

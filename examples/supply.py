@@ -20,5 +20,8 @@ client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 
 for asset_name in ordered_symbols:
     print("Processing transaction for asset=%s" % (asset_name))
-    transaction_group = prepare_supply_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100, asset_name)
-    result = client.submit(transaction_group, wait=True)
+    transaction = prepare_supply_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100, asset_name)
+    client.sign(transactions, [sender_key]*7, sign_last_wlogic=False)
+    result = client.submit(client.signed_transactions, wait=True)
+
+#for asset_name in ordered_symbols:
