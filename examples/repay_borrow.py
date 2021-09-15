@@ -3,7 +3,7 @@
 # This example does not constitute trading advice.
 from algofi.config import ordered_symbols, decimals, scale
 from algofi.v1.client import TestnetClient
-from algofi.v1.add_collateral import prepare_add_collateral_transactions
+from algofi.v1.repay_borrow import prepare_repay_borrow_transactions
 from algofi.utils import TransactionGroup
 from algosdk import mnemonic
 
@@ -19,19 +19,17 @@ client.init_params()
 client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 init_global_state = client.get_global_states()
 
-
 print("~"*100)
-print("Processing add_collateral transactions for all assets")
+print("Processing burn transactions for all assets")
 print("~"*100)
 for asset_name in ordered_symbols:
     print("Processing transaction for asset = %s" % (asset_name))
-    txn_group = TransactionGroup(prepare_add_collateral_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 20*decimals[asset_name], asset_name))
+    txn_group = TransactionGroup(prepare_repay_borrow_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 1*decimals[asset_name], asset_name))
     txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*len(txn_group.transactions))
     txn_group.sign(sign_last_wlogic=False)
     result = client.submit(txn_group.signed_transactions, wait=True)
-
 print("~"*100)
-print("Global contract states after calling add_collateral")
+print("Global contract states after calling repay_borrow")
 print("~"*100)
 final_global_state = client.get_global_states()
 for asset_name in ordered_symbols:
@@ -45,13 +43,15 @@ for asset_name in ordered_symbols:
     print("~"*100)
 
 print("~"*100)
-print("User local states after calling add_collateral")
+print("User local states after calling repay_borrow")
 print("~"*100)
 final_user_state = client.get_user_state()
+print('final_user_state=', final_user_state)
 for asset_name in ordered_symbols:
     print("Printing global state for asset = ", asset_name)
     print('user_bank_minted=', final_user_state[asset_name]['user_bank_minted']/decimals[asset_name])
     print('user_bank_pending_claim_mint=', final_user_state[asset_name]['user_bank_pending_mint']/decimals[asset_name])
     print('user_bank_pending_claim_burn=', final_user_state[asset_name]['user_underlying_pending_burn']/decimals[asset_name])
     print('user_active_collateral_amount=', final_user_state[asset_name]['user_active_collateral_amount']/decimals[asset_name])
+    print('user_borrowed_amount=', final_user_state[asset_name]['user_borrowed_amount']/decimals[asset_name])
     print("~"*100)
