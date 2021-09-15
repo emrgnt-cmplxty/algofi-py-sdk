@@ -116,7 +116,7 @@ class TransactionGroup:
         gid = calculate_group_id(self.transactions)
         for txn,key in zip(self.transactions, self.keys):
             txn.group = gid
-            if txn != txns[-1]:
+            if txn != self.transactions[-1]:
                 stxn_group.append(txn.sign(key))
             else:
                 if (sign_last_wlogic):
