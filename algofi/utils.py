@@ -108,9 +108,13 @@ class TransactionGroup:
         self.transactions = transactions
         self.signed_transactions = [None for _ in self.transactions]
 
-    def sign(self, keys, sign_last_wlogic=False):
+    def set_transaction_keys(self, keys):
+        self.keys = keys
+
+    def sign(self, sign_last_wlogic=False):
         stxn_group = []
-        for txn,key in zip(self.transactions, keys):
+        gid = transaction.calculate_group_id(self.transactions)
+        for txn,key in zip(self.transactions, self.keys):
             txn.group = gid
             if txn != txns[-1]:
                 stxn_group.append(txn.sign(key))
