@@ -59,6 +59,25 @@ def encode_varint(number):
             break
     return buf
 
+# read user local state
+def read_local_state(self, app_id):
+    results = self.algod.account_info(self.user_address)
+    for local_state in results['apps-local-state']:
+        if local_state['id'] == app_id:
+            if 'key-value' not in local_state:
+                return {}
+            return format_state(local_state['key-value'])
+    return {}
+
+# read app global state
+def read_global_state(self, app_id):
+    results = self.algod.account_info(self.user_address)
+    apps_created = results['created-apps']
+    for app in apps_created:
+        if app['id'] == app_id:
+            return format_state(app['params']['global-state'])
+    return {}
+
 
 def sign_and_submit_transactions(client, transactions, signed_transactions, sender, sender_sk):
     for i, txn in enumerate(transactions):
