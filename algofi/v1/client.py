@@ -68,13 +68,13 @@ class Client:
                 return format_state(app['params']['global-state'])
         return {}
 
-    def get_user_state(self, address, config):
+    def get_user_state(self):
         init = {"manager" : read_local_state(manager_id)}
         for asset_name in ordered_symbols:
             init = {"asset_name" : read_local_state(storage_ids[asset_name])}
         return init
 
-    def get_global_states(self, address, config):
+    def get_global_states(self):
         init = {"manager" : read_global_state(manager_id)}
         for asset_name in ordered_symbols:
             init = {"asset_name" : read_local_state(storage_ids[asset_name])}
