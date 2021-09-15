@@ -5,7 +5,7 @@ from algosdk.error import AlgodHTTPError
 from algosdk.encoding import encode_address
 from algofi.utils import opt_in_user_to_app, opt_in_user_to_asset, read_local_state, read_global_state, wait_for_confirmation
 from algofi.assets import Asset, AssetAmount
-from algofi.config import ordered_symbols, assets, manager_id, storage_ids
+from algofi.config import assets, creator_address, ordered_symbols, manager_id, storage_ids
 
 class Client:
     def __init__(self, algod_client: AlgodClient, user_address=None):
@@ -49,15 +49,15 @@ class Client:
             pass
 
     def get_user_state(self):
-        init = {"manager" : read_local_state(self.algod, manager_id)}
+        init = {"manager" : read_local_state(self.algod, self.user_address, manager_id)}
         for asset_name in ordered_symbols:
-            init = {asset_name : read_local_state(self.algod, storage_ids[asset_name])}
+            init = {asset_name : read_local_state(self.algod, self.user_address, storage_ids[asset_name])}
         return init
 
     def get_global_states(self):
-        init = {"manager" : read_global_state(self.algod, manager_id)}
+        init = {"manager" : read_global_state(self.algod, creator_address, manager_id)}
         for asset_name in ordered_symbols:
-            init = {asset_name : read_global_state(self.algod, storage_ids[asset_name])}
+            init = {asset_name : read_global_state(self.algod, creator_address, storage_ids[asset_name])}
         return init
 
     def submit(self, transaction_group, wait=False):
