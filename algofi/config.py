@@ -11,6 +11,12 @@ assets = {
             "bYLDY": 26554605, 
             "bBANK": 26554643
         }
+decimals = {
+            "USDC": 10**6, 
+            "WALGO": 10**6, 
+            "YLDY": 10**6, 
+            "BANK": 10**6,
+        }        
 escrow_hashes = {
                     "USDC": "FHR2FO5D5GPLAZVGYIC2ZHNLUYOG2PZWQB6NVIZWBHJO76V7CZWUBM4CXQ", 
                     "WALGO": "WTRVTZK5S2COIAJRMPMHEVX6ZQHYKTVQ3PB3CEB7DRZOML5WIN24NOBSDY",

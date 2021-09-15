@@ -51,13 +51,13 @@ class Client:
     def get_user_state(self):
         init = {"manager" : read_local_state(self.algod, self.user_address, manager_id)}
         for asset_name in ordered_symbols:
-            init = {asset_name : read_local_state(self.algod, self.user_address, storage_ids[asset_name])}
+            init[asset_name] = read_local_state(self.algod, self.user_address, storage_ids[asset_name])
         return init
 
     def get_global_states(self):
         init = {"manager" : read_global_state(self.algod, creator_address, manager_id)}
         for asset_name in ordered_symbols:
-            init = {asset_name : read_global_state(self.algod, creator_address, storage_ids[asset_name])}
+            init[asset_name] = read_global_state(self.algod, creator_address, storage_ids[asset_name])
         return init
 
     def submit(self, transaction_group, wait=False):
