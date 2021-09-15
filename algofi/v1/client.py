@@ -3,7 +3,7 @@ from base64 import b64decode
 from algosdk.v2client.algod import AlgodClient
 from algosdk.error import AlgodHTTPError
 from algosdk.encoding import encode_address
-from algofi.utils import opt_in_user_to_app, opt_in_user_to_asset, wait_for_confirmation
+from algofi.utils import opt_in_user_to_app, opt_in_user_to_asset, read_local_state, read_global_state, wait_for_confirmation
 from algofi.assets import Asset, AssetAmount
 from algofi.config import ordered_symbols, assets, manager_id, storage_ids
 
@@ -48,35 +48,16 @@ class Client:
         except:
             pass
 
-    # read user local state
-    def read_local_state(self, app_id):
-        results = self.algod.account_info(self.user_address)
-        for local_state in results['apps-local-state']:
-            if local_state['id'] == app_id:
-                if 'key-value' not in local_state:
-                    return {}
-                return format_state(local_state['key-value'])
-        return {}
-
-    # read app global state
-    def read_global_state(self, app_id):
-        results = self.algod.account_info(self.user_address)
-        apps_created = results['created-apps']
-        for app in apps_created:
-            if app['id'] == app_id:
-                return format_state(app['params']['global-state'])
-        return {}
-
     def get_user_state(self):
         init = {"manager" : read_local_state(manager_id)}
         for asset_name in ordered_symbols:
-            init = {"asset_name" : read_local_state(storage_ids[asset_name])}
+            init = {asset_name : read_local_state(storage_ids[asset_name])}
         return init
 
     def get_global_states(self):
         init = {"manager" : read_global_state(manager_id)}
         for asset_name in ordered_symbols:
-            init = {"asset_name" : read_local_state(storage_ids[asset_name])}
+            init = {asset_name : read_global_state(storage_ids[asset_name])}
         return init
 
     def submit(self, transaction_group, wait=False):
