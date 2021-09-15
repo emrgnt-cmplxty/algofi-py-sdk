@@ -113,7 +113,7 @@ class TransactionGroup:
 
     def sign(self, sign_last_wlogic=False):
         stxn_group = []
-        gid = transaction.calculate_group_id(self.transactions)
+        gid = calculate_group_id(self.transactions)
         for txn,key in zip(self.transactions, self.keys):
             txn.group = gid
             if txn != txns[-1]:
