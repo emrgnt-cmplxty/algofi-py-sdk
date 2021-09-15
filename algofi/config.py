@@ -16,7 +16,8 @@ decimals = {
             "WALGO": 10**6, 
             "YLDY": 10**6, 
             "BANK": 10**6,
-        }        
+        }
+scale = 10**9        
 escrow_hashes = {
                     "USDC": "FHR2FO5D5GPLAZVGYIC2ZHNLUYOG2PZWQB6NVIZWBHJO76V7CZWUBM4CXQ", 
                     "WALGO": "WTRVTZK5S2COIAJRMPMHEVX6ZQHYKTVQ3PB3CEB7DRZOML5WIN24NOBSDY",
