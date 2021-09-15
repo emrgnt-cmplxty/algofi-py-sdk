@@ -5,60 +5,20 @@
 from algofi.v1.client import TestnetClient
 from algofi.v1.supply import prepare_supply_transactions
 from algosdk import mnemonic
+from algofi.config import ordered_symbols
 
 # Hardcoding account keys is not a great practice. This is for demonstration purposes only.
 # See the README & Docs for alternative signing methods.
 sender = {
-    'address': 'GI2W32BVKTSKOWSXFQXKQZBKMTLDLFI2KST7BJ7YZWDZL2PM6TGCGBTLGI',
-    'mnemonic': 'hamster size staff top reject clap ivory matrix vintage trip south current transfer upper lemon all toe fade again sweet south rely horse about giraffe', # Use algosdk.mnemonic.to_private_key(mnemonic) if necessary
+    'address': 'P4YQ75KCRZT6FF72AF4VZXZ5JDSQA6MVPN5EMCN3H6Z66DK3BRWUO3UQCI',
+    'mnemonic': 'noodle learn crack outdoor salon acoustic blind creek panther elegant alone curve surface pair little salute steak above nature cook account chat column above universe', 
 }
 
-print('private_key=%s' % (mnemonic.to_private_key(sender['mnemonic'])))
 client = TestnetClient(user_address=sender['address'])
 client.init_params()
 client.opt_in_all(mnemonic.to_private_key(sender['mnemonic']))
 
-asset_name = "USDC"
-transaction_group = prepare_supply_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100, asset_name)
-print('transaction_group=', transaction_group)
-
-result = client.submit(transaction_group, wait=True)
-
-# By default all subsequent operations are on behalf of user_address
-
-'''
-# Fetch our two assets of interest
-TINYUSDC = client.fetch_asset(21582668)
-ALGO = client.fetch_asset(0)
-
-# Fetch the pool we will work with
-pool = client.fetch_pool(TINYUSDC, ALGO)
-
-# Get a quote for supplying 1000.0 TinyUSDC
-quote = pool.fetch_mint_quote(TINYUSDC(1000_000_000), slippage=0.01)
-
-print(quote)
-
-# Check if we are happy with the quote..
-if quote.amounts_in[ALGO] < 5_000_000:
-    # Prepare the mint transactions from the quote and sign them
-    transaction_group = pool.prepare_mint_transactions_from_quote(quote)
-    transaction_group.sign_with_private_key(account['address'], account['private_key'])
+for asset_name in ordered_symbols:
+    print("Processing transaction for asset=%s" % (asset_name))
+    transaction_group = prepare_supply_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100, asset_name)
     result = client.submit(transaction_group, wait=True)
-
-    # Check if any excess liquidity asset remaining after the mint
-    excess = pool.fetch_excess_amounts()
-    if pool.liquidity_asset in excess:
-        amount = excess[pool.liquidity_asset]
-        print(f'Excess: {amount}')
-        if amount > 1_000_000:
-            transaction_group = pool.prepare_redeem_transactions(amount)
-            transaction_group.sign_with_private_key(account['address'], account['private_key'])
-            result = client.submit(transaction_group, wait=True)
-
-info = pool.fetch_pool_position()
-share = info['share'] * 100
-print(f'Pool Tokens: {info[pool.liquidity_asset]}')
-print(f'Assets: {info[TINYUSDC]}, {info[ALGO]}')
-print(f'Share of pool: {share:.3f}%')
-'''

@@ -16,7 +16,6 @@ def package_all_tx(txns, keys, sign_last_wlogic=False):
                 stxn_group.append(txn.sign(key))
     return stxn_group
 
-
 #   Utility function used to create opt-in asset transaction
 def opt_in_user_to_asset(sender_addr, sender_key, params, asset_id):
     # declare sender
@@ -145,5 +144,3 @@ class TransactionGroup:
         if wait:
             return wait_for_confirmation(algod, txid)
         return {'txid': txid}
-
-

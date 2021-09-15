@@ -7,12 +7,10 @@ from algofi.utils import opt_in_user_to_app, opt_in_user_to_asset, wait_for_conf
 from algofi.assets import Asset, AssetAmount
 from algofi.config import ordered_symbols, assets, manager_id, storage_ids
 from .optin import prepare_app_optin_transactions
-from .constants import TESTNET_VALIDATOR_APP_ID, MAINNET_VALIDATOR_APP_ID
 
 class Client:
-    def __init__(self, algod_client: AlgodClient, validator_app_id: int, user_address=None):
+    def __init__(self, algod_client: AlgodClient, user_address=None):
         self.algod = algod_client
-        self.validator_app_id = validator_app_id
         self.assets_cache = {}
         self.user_address = user_address
     
@@ -51,6 +49,37 @@ class Client:
         except:
             pass
 
+    # read user local state
+    def read_local_state(self, app_id):
+        results = self.algod.account_info(self.user_address)
+        for local_state in results['apps-local-state']:
+            if local_state['id'] == app_id:
+                if 'key-value' not in local_state:
+                    return {}
+                return format_state(local_state['key-value'])
+        return {}
+
+    # read app global state
+    def read_global_state(self, app_id):
+        results = self.algod.account_info(self.user_address)
+        apps_created = results['created-apps']
+        for app in apps_created:
+            if app['id'] == app_id:
+                return format_state(app['params']['global-state'])
+        return {}
+
+    def get_user_state(self, address, config):
+        init = {"manager" : read_local_state(manager_id)}
+        for asset_name in ordered_symbols:
+            init = {"asset_name" : read_local_state(storage_ids[asset_name])}
+        return init
+
+    def get_global_states(self, address, config):
+        init = {"manager" : read_global_state(manager_id)}
+        for asset_name in ordered_symbols:
+            init = {"asset_name" : read_local_state(storage_ids[asset_name])}
+        return init
+
     def submit(self, transaction_group, wait=False):
         try:
             txid = self.algod.send_transactions(transaction_group)
@@ -60,34 +89,17 @@ class Client:
             return wait_for_confirmation(self.algod, txid)
         return {'txid': txid}
 
-    def prepare_app_optin_transactions(self, user_address=None):
-        user_address = user_address or self.user_address
-        suggested_params = self.algod.suggested_params()
-        txn_group = prepare_app_optin_transactions(
-            validator_app_id=self.validator_app_id,
-            sender=user_address,
-            suggested_params=suggested_params,
-        )
-        return txn_group
     
-    def is_opted_in(self, user_address=None):
-        user_address = user_address or self.user_address
-        account_info = self.algod.account_info(user_address)
-        for a in account_info['apps-local-state']:
-            if a['id'] == self.validator_app_id:
-                return True
-        return False
-
 class TestnetClient(Client):
     def __init__(self, algod_client=None, user_address=None):
         if algod_client is None:
             algod_client = AlgodClient('', 'https://api.testnet.algoexplorer.io', headers={'User-Agent': 'algosdk'})
-        super().__init__(algod_client, validator_app_id=TESTNET_VALIDATOR_APP_ID, user_address=user_address)
+        super().__init__(algod_client, user_address=user_address)
 
 class MainnetClient(Client):
     def __init__(self, algod_client=None, user_address=None):
         raise Exception('Not on mainnet yet!')
         if algod_client is None:
             algod_client = AlgodClient('', 'https://api.algoexplorer.io', headers={'User-Agent': 'algosdk'})
-        super().__init__(algod_client, validator_app_id=MAINNET_VALIDATOR_APP_ID, user_address=user_address)
+        super().__init__(algod_client, user_address=user_address)
 
