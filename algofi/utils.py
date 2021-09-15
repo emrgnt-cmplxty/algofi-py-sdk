@@ -73,6 +73,12 @@ def format_state(state):
     return formatted
 
 
+def logic_sign(txn, program):
+    t = program.encode()
+    program_encoded = base64.decodebytes(t)
+    lsig = transaction.LogicSig(program_encoded)
+    return transaction.LogicSigTransaction(txn, lsig)
+
 # read user local state
 def read_local_state(algod, user_address, app_id):
     results = algod.account_info(user_address)

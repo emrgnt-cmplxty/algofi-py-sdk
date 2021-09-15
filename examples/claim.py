@@ -1,7 +1,7 @@
 # This sample is provided for demonstration purposes only.
 # It is not intended for production use.
 # This example does not constitute trading advice.
-from algofi.config import ordered_symbols, decimals, scale
+from algofi.config import decimals, escrow_hashes, ordered_symbols, scale
 from algofi.v1.client import TestnetClient
 from algofi.v1.claim import prepare_claim_transactions
 from algofi.utils import TransactionGroup
@@ -26,8 +26,8 @@ print("~"*100)
 for asset_name in ordered_symbols:
     print("Processing transaction for asset = %s" % (asset_name))
     txn_group = TransactionGroup(prepare_claim_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 100*decimals[asset_name], asset_name))
-    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*len(txn_group.transactions))
-    txn_group.sign(sign_last_wlogic=False)
+    txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*(len(txn_group.transactions)-1)+[escrow_hashes[asset_name]])
+    txn_group.sign(sign_last_wlogic=True)
     result = client.submit(txn_group.signed_transactions, wait=True)
 
 print("~"*100)
