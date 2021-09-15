@@ -3,7 +3,7 @@
 # This example does not constitute trading advice.
 from algofi.config import decimals, escrow_programs, ordered_symbols, scale
 from algofi.v1.client import TestnetClient
-from algofi.v1.claim_mint import prepare_claim_mint_transactions
+from algofi.v1.remove_collateral import prepare_remove_collateral_transactions
 from algofi.utils import TransactionGroup
 from algosdk import mnemonic
 
@@ -21,17 +21,17 @@ init_global_state = client.get_global_states()
 
 
 print("~"*100)
-print("Processing claim_mint transactions for all assets")
+print("Processing remove_collateral transactions for all assets")
 print("~"*100)
 for asset_name in ordered_symbols:
     print("Processing transaction for asset = %s" % (asset_name))
-    txn_group = TransactionGroup(prepare_claim_mint_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 99*decimals[asset_name], asset_name))
+    txn_group = TransactionGroup(prepare_remove_collateral_transactions(sender['address'], mnemonic.to_private_key(sender['mnemonic']), client.params, 1*decimals[asset_name], asset_name))
     txn_group.set_transaction_keys([mnemonic.to_private_key(sender['mnemonic'])]*(len(txn_group.transactions)-1)+[escrow_programs[asset_name]])
     txn_group.sign(sign_last_wlogic=True)
     result = client.submit(txn_group.signed_transactions, wait=True)
 
 print("~"*100)
-print("Global contract states after calling claim_mint")
+print("Global contract states after calling remove_collateral")
 print("~"*100)
 final_global_state = client.get_global_states()
 for asset_name in ordered_symbols:
@@ -45,7 +45,7 @@ for asset_name in ordered_symbols:
     print("~"*100)
 
 print("~"*100)
-print("User local states after calling claim_mint")
+print("User local states after calling remove_collateral")
 print("~"*100)
 final_user_state = client.get_user_state()
 for asset_name in ordered_symbols:
